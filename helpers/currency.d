@@ -1,6 +1,6 @@
 /*****************************************************************************
  *                                                                           *
- * Currency datatype														 *
+ * Currency datatype with 4 decimal precision								 *
  *                                                                           *
  *****************************************************************************/
 
@@ -14,6 +14,9 @@ import std.math : lround;
 struct Currency
 {
 	public:
+		
+		alias value this;
+		
 		// generic constructor
 		this(T)(T val) { __toCurrency(val); }
 	
@@ -61,8 +64,8 @@ struct Currency
 		}
 		
 	private:
-		enum frmt = "%.2f";		// strings rounded to two digits
-		enum factor = 10000;	// internal representation is four digits
+		immutable enum frmt = "%.2f";		// strings rounded to two digits
+		immutable enum factor = 10000;		// internal representation is four digits
 		
 		// storage for our value
 		long value_;
@@ -78,7 +81,7 @@ struct Currency
 				value_ = cast(long) lround(to!double(val) * factor);
 			else
 				// otherwise it is not possible
-				throw new Exception("type " ~ to!string(typeid(T)) ~ " is incompatible with Currency");
+				throw new Exception(format("type '%s' cannot be converted to Currency", typeid(T)));
 		}
 		
 		// convert to double
@@ -88,13 +91,13 @@ struct Currency
 		}		
 }
 
-// helper routine: currency.toEuro
+// helper function: currency.toEuro
 string asEuro(ref Currency cur)
 {
 	return format("€ %s", cur);
 }
 
-// helper routine: currency.toDollar
+// helper function: currency.toDollar
 string asDollar(ref Currency cur)
 {
 	return format("$ %s", cur);
